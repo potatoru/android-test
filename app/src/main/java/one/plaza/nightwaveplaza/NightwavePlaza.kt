@@ -6,6 +6,7 @@ import org.acra.config.httpSender
 import org.acra.data.StringFormat
 import org.acra.ktx.initAcra
 import org.acra.sender.HttpSender
+import timber.log.Timber
 
 class NightwavePlaza : Application() {
 
@@ -14,7 +15,11 @@ class NightwavePlaza : Application() {
         super.onCreate()
         initStorage()
 
-        if (BuildConfig.ACRA_URI.isNotEmpty()) {
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
+
+        if (BuildConfig.ACRA_URI.isNotEmpty() && !BuildConfig.DEBUG) {
             initAcra {
                 buildConfigClass = BuildConfig::class.java
                 reportFormat = StringFormat.JSON

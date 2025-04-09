@@ -1,5 +1,6 @@
 package one.plaza.nightwaveplaza.api
 
+import android.util.Log
 import androidx.annotation.Keep
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
@@ -15,32 +16,39 @@ import one.plaza.nightwaveplaza.helpers.Utils
 class ApiClient {
     @Keep data class Status(
         val song: Song = Song(),
-        val listeners: Int = 0
+        val listeners: Int = 0,
+        val reactions: Int = 0,
+        val position: Int = 0,
+        @SerializedName("updated_at")
+        val updatedAt: Long = 0L
     )
 
     @Keep data class Song(
-        var id: String = "",
-        var artist: String = "",
-        var title: String = "",
-        var album: String = "",
-        var position: Int = 0,
-        var length: Int = 0,
-
+        val id: String = "",
+        val artist: String = "",
+        val album: String = "",
+        val title: String = "",
+        val length: Int = 0,
         @SerializedName("artwork_src")
-        var artworkSrc: String = "",
-        var reactions: Int = 0,
-        var updatedAt: Long = 0L
+        val artworkSrc: String = "",
+        @SerializedName("artwork_sm_src")
+        val artworkSmSrc: String = "",
+        @SerializedName("preview_src")
+        val previewSrc: String = ""
     )
 
     @Keep data class Version(
+        @SerializedName("view_version")
         var viewVersion: Int = 0,
+        @SerializedName("android_min_ver")
         var androidMinVersion: Int = 0,
+        @SerializedName("ios_min_ver")
         var iOsMinVersion: Int = 0,
         @SerializedName("view_src")
         var viewSrc: String = ""
     )
 
-    private val baseUrl = "https://api.plaza.one/"
+    private val baseUrl = BuildConfig.PLAZA_API
 
     private var client: OkHttpClient = createClient()
 
@@ -95,6 +103,7 @@ class ApiClient {
                 resp = response.body?.string()
             }
         } catch (err: IOException) {
+            Log.e(ApiClient::class.toString(), err.message.toString())
             throw Exception("Network exception")
         }
 
